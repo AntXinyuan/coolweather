@@ -1,15 +1,21 @@
 package com.lxy.coolweather.util;
 
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
+import com.google.gson.Gson;
 import com.lxy.coolweather.db.City;
 import com.lxy.coolweather.db.County;
 import com.lxy.coolweather.db.Province;
+import com.lxy.coolweather.gson.Weather;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * 该类提供了一些处理HTTP响应、解析JSON数据并录入数据库的方法
+ */
 public class Utility {
     public static boolean handleProvinceResponse(String response){
         if(!TextUtils.isEmpty(response)){
@@ -68,5 +74,17 @@ public class Utility {
             }
         }
         return false;
+    }
+
+    public static Weather handleWeatherResponse(String response){
+        try {
+            JSONObject jsonObject=new JSONObject(response);
+            JSONArray jsonArray=jsonObject.getJSONArray("HeWeather");
+            String weatherContent=jsonArray.getJSONObject(0).toString();
+            return new Gson().fromJson(weatherContent,Weather.class);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
     }
 }
